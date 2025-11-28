@@ -299,4 +299,9 @@ public class ChatController {
         
         System.out.println("🛑 Ứng dụng đã tắt hoàn toàn");
     }
+
+    @FXML
+    private void chooseFile(){
+
+    }
 }

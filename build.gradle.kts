@@ -1,9 +1,8 @@
 plugins {
     java
     application
-    id("org.javamodularity.moduleplugin") version "1.8.15"
-    id("org.openjfx.javafxplugin") version "0.0.13"
-    id("org.beryx.jlink") version "2.25.0"
+    id("org.openjfx.javafxplugin") version "0.1.0"
+    id("org.beryx.jlink") version "3.1.1"
 }
 
 group = "dhkthn"
@@ -24,7 +23,7 @@ tasks.withType<JavaCompile> {
 }
 
 application {
-    mainModule.set("dhkthn.p2p")
+//    mainModule.set("dhkthn.p2p")
     mainClass.set("dhkthn.p2p.Main")
 }
 
