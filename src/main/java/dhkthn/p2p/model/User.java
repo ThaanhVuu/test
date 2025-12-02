@@ -1,10 +1,12 @@
 package dhkthn.p2p.model;
 
 import dhkthn.p2p.config.AppConfig;
+import dhkthn.p2p.model.interfaces.IUser;
 import lombok.*;
 
 import java.io.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -15,6 +17,9 @@ public class User implements Serializable, IUser {
     private UUID uuid = UUID.randomUUID();
     private String username;
     private String password;
+    private List<Message> messages;
+    private int port;
+    private String host;
 
     @Override
     public boolean matches(String rawPassword){
@@ -75,4 +80,28 @@ public class User implements Serializable, IUser {
     public int hashCode(){
         return username == null ? 0 : username.toLowerCase().hashCode();
     }
+
+    public static String getLocalIP() {
+        try {
+            var interfaces = java.net.NetworkInterface.getNetworkInterfaces();
+
+            while (interfaces.hasMoreElements()) {
+                var ni = interfaces.nextElement();
+                if (!ni.isUp() || ni.isLoopback() || ni.isVirtual()) continue;
+
+                var addrs = ni.getInetAddresses();
+                while (addrs.hasMoreElements()) {
+                    var addr = addrs.nextElement();
+
+                    // skip IPv6 và loopback
+                    if (addr instanceof java.net.Inet4Address && !addr.isLoopbackAddress()) {
+                        return addr.getHostAddress();
+                    }
+                }
+            }
+        } catch (Exception ignored) {}
+
+        return "127.0.0.1"; // fallback
+    }
+
 }

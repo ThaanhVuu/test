@@ -10,6 +10,7 @@ module dhkthn.p2p {
 
     // Lombok (chỉ cần compile-time)
     requires static lombok;
+    requires dhkthn.p2p;
 
     // Mở package cho FXMLLoader (bắt buộc nếu dùng FXML)
     opens dhkthn.p2p to javafx.fxml;

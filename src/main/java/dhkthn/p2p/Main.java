@@ -12,7 +12,6 @@ import org.kordamp.bootstrapfx.BootstrapFX;
 
 import java.io.IOException;
 import java.util.Objects;
-import java.util.Scanner;
 
 public class Main extends Application {
 
@@ -22,41 +21,6 @@ public class Main extends Application {
         Parent root = FXMLLoader.load(Objects.requireNonNull(Main.class.getResource(fxml)));
         scene.setRoot(root);
     }
-    
-//    @Override
-//    public void start(Stage primaryStage) throws Exception {
-//        UserAgentBuilder.builder()
-//                .themes(JavaFXThemes.MODENA)
-//                .themes(MaterialFXStylesheets.forAssemble(true))
-//                .setDeploy(true)
-//                .setResolveAssets(true)
-//                .build()
-//                .setGlobal();
-//
-//        FXMLLoader loader = new FXMLLoader(getClass().getResource("chat.fxml"));
-//        Parent root = loader.load();
-//
-//        // Load CSS
-//        root.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
-//
-//        // Lấy controller để shutdown khi đóng app
-//        ChatController controller = loader.getController();
-//
-//        scene = new Scene(root, 1000, 600);
-//
-//        primaryStage.setTitle("P2P Chat - UserA (Port: 12345)");
-//        primaryStage.setScene(scene);
-//        primaryStage.setX(100);
-//        primaryStage.setY(100);
-//        primaryStage.show();
-//
-//        primaryStage.setOnCloseRequest(e -> {
-//            if (controller != null) {
-//                controller.shutdown();
-//            }
-//        });
-//    }
-
 
     @Override
     public void start(Stage primaryStage) throws Exception {
@@ -81,4 +45,5 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+
 }

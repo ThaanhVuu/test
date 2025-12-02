@@ -1,4 +1,6 @@
-package dhkthn.p2p.model;
+package dhkthn.p2p.model.interfaces;
+
+import dhkthn.p2p.model.User;
 
 import java.io.IOException;
 import java.util.Set;

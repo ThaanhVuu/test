@@ -4,6 +4,8 @@ import dhkthn.p2p.model.User;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.IOException;
+import java.net.InetAddress;
 import java.security.MessageDigest;
 import java.util.Base64;
 import java.util.concurrent.ExecutorService;
@@ -18,6 +20,16 @@ public class AppConfig {
 
     @Getter @Setter
     private static User user;
+
+    @Getter
+    private static final int DISCOVERY_PORT = 8888;
+
+    @Getter
+    private static final int TIME_OUT = 1500;
+
+    public static InetAddress getBroadcastAddress() throws IOException {
+        return InetAddress.getByName("255.255.255.255");
+    }
 
     @Getter
     private static final ExecutorService executor = Executors.newFixedThreadPool(10);

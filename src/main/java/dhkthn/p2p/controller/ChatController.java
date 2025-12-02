@@ -1,8 +1,6 @@
 package dhkthn.p2p.controller;
 
-import dhkthn.p2p.config.AppConfig;
-import dhkthn.p2p.model.IPeer;
-import dhkthn.p2p.model.Peer;
+import dhkthn.p2p.model.storeTest.IPeerFileTransfer2;
 import dhkthn.p2p.model.message.ChatMessage;
 import dhkthn.p2p.service.message.ChatHistoryService;
 import dhkthn.p2p.service.message.MessageServer;
@@ -15,17 +13,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.geometry.Pos;
 import javafx.geometry.Insets;
 import javafx.animation.TranslateTransition;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import lombok.Getter;
-import lombok.Setter;
 
-import java.net.*;
-import java.io.*;
-import java.util.concurrent.*;
 import java.util.List; // 🆕 THÊM IMPORT
 
 public class ChatController {
@@ -53,7 +44,7 @@ public class ChatController {
     private int myPort = 12345; // UserB port
 
     @FXML
-    public void initialize(IPeer iPeer) {
+    public void initialize(IPeerFileTransfer2 iPeer) {
         System.out.println("🎬 Khởi tạo ChatController...");
         // 🆕 KHỞI TẠO SERVICE LỊCH SỬ
         chatHistoryService = new ChatHistoryService();

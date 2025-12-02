@@ -1,6 +1,6 @@
 package dhkthn.p2p.service.message;
 
-import dhkthn.p2p.model.IPeer;
+import dhkthn.p2p.model.storeTest.IPeerFileTransfer2;
 import lombok.*;
 
 import java.io.File;
@@ -8,7 +8,7 @@ import java.io.File;
 @Getter @Setter @RequiredArgsConstructor
 @Builder
 public class FileSender implements IFile{
-    private final IPeer peer;
+    private final IPeerFileTransfer2 peer;
 
     @Override
     public void sendFile(File file, String host, int port) {
