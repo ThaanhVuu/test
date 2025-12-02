@@ -43,7 +43,7 @@ public class Test {
                 }
 
                 //noinspection BusyWait
-                Thread.sleep(1000);
+                Thread.sleep(500);
             }catch (IOException | InterruptedException e){
                 throw new RuntimeException(e.getMessage());
             }

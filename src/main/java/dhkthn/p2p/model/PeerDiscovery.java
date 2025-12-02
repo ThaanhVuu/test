@@ -47,6 +47,7 @@ public class PeerDiscovery extends Peer implements IPeerDiscover {
     @Override
     public void listening() throws IOException {
         DatagramSocket socket = openSharedSocket(AppConfig.getDISCOVERY_PORT());
+        socket.setBroadcast(true);
         byte[] buffer = new byte[1024];
 
         while (super.isRunning()) {
@@ -102,7 +103,7 @@ public class PeerDiscovery extends Peer implements IPeerDiscover {
         );
 
         // Gửi từ clientSocket, port nguồn = clientSocket.getLocalPort()
-        clientSocket.send(packet);
+        this.clientSocket.send(packet);
 
         // NOTE: không close clientSocket, vì còn dùng để scan()
     }
@@ -123,7 +124,7 @@ public class PeerDiscovery extends Peer implements IPeerDiscover {
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
             try {
-                clientSocket.receive(packet); // nhận DISCOVER_RES gửi về port clientSocket
+                this.clientSocket.receive(packet); // nhận DISCOVER_RES gửi về port clientSocket
             } catch (SocketTimeoutException e) {
                 // Hết timeout 1 lần receive, tiếp tục vòng while kiểm tra tổng thời gian
                 continue;

@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface IPeerMessenger extends IPeer {
     void sendMessage(User to, String content);
-    void saveMessage();
+    void saveMessage(Message message);
     List<Message> getMessageHistory();
 }

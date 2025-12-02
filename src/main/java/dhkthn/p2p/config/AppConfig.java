@@ -25,7 +25,7 @@ public class AppConfig {
     private static final int DISCOVERY_PORT = 8888;
 
     @Getter
-    private static final int TIME_OUT = 1500;
+    private static final int TIME_OUT = 5000;
 
     public static InetAddress getBroadcastAddress() throws IOException {
         return InetAddress.getByName("255.255.255.255");
