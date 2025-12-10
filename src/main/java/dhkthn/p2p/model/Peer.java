@@ -15,4 +15,6 @@ public class Peer {
     private ExecutorService pool;
     private boolean running;
     private DatagramSocket datagramSocket;
+
+    private PeerDiscover peerDiscover;
 }

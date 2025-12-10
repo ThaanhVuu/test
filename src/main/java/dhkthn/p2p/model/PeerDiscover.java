@@ -10,11 +10,13 @@ import java.net.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PeerDiscover extends Peer{
-    public void start() {
-        super.setRunning(true);
+public class PeerDiscover{
+    private Peer peer;
 
-        super.getPool().execute(() -> {
+    public void start() {
+        peer.setRunning(true);
+
+        peer.getPool().execute(() -> {
             try {
                 this.listening();
             } catch (IOException e) {
@@ -22,7 +24,7 @@ public class PeerDiscover extends Peer{
             }
         });
 
-        super.getPool().execute(() -> {
+        peer.getPool().execute(() -> {
             try {
                 while (true) {
                     this.broadcast();
@@ -35,29 +37,29 @@ public class PeerDiscover extends Peer{
     }
 
     public void stop(){
-        super.setRunning(false);
-        if (super.getDatagramSocket() != null && !super.getDatagramSocket().isClosed()) {
-            super.getDatagramSocket().close();
+        peer.setRunning(false);
+        if (peer.getDatagramSocket() != null && !peer.getDatagramSocket().isClosed()) {
+            peer.getDatagramSocket().close();
         }
     }
 
     private void broadcast() throws IOException {
-        super.getDatagramSocket().setBroadcast(true);
-        String msg = "DISCOVER:" + super.getUsername() + ":" + super.getPort();
+        peer.getDatagramSocket().setBroadcast(true);
+        String msg = "DISCOVER:" + peer.getUsername() + ":" + peer.getPort();
         byte[] buffer = msg.getBytes();
         InetAddress address = InetAddress.getByName("255.255.255.255");
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, super.getPort());
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, peer.getPort());
 
-        getDatagramSocket().send(packet);
+        peer.getDatagramSocket().send(packet);
     }
 
     private void listening() throws IOException {
-        System.out.println(super.getUsername() + " is listening on port: " + super.getPort());
+        System.out.println(peer.getUsername() + " is listening on port: " + peer.getPort());
         byte[] buffer = new byte[1024];
         while (true) {
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
-            super.getDatagramSocket().receive(packet);
+            peer.getDatagramSocket().receive(packet);
 
             String received = new String(packet.getData(), 0, packet.getLength());
 
@@ -70,7 +72,7 @@ public class PeerDiscover extends Peer{
                 String senderName = parts[1];
 
                 // Nếu tên người gửi trùng với tên mình -> Bỏ qua
-                if (senderName.equals(super.getUsername())) {
+                if (senderName.equals(peer.getUsername())) {
                     continue;
                 }
 
