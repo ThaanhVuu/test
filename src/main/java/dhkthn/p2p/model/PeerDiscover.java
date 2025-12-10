@@ -2,45 +2,83 @@ package dhkthn.p2p.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.IOException;
 import java.net.*;
 
-@NoArgsConstructor @AllArgsConstructor @Data @Builder
-public class PeerDiscover {
-    private int port;
-    private String username;
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class PeerDiscover extends Peer{
+    public void start() {
+        super.setRunning(true);
 
-    public void broadcast(String message) {
-        try (DatagramSocket socket = new DatagramSocket()) {
-            socket.setBroadcast(true);
-            byte[] buffer = message.getBytes();
-            InetAddress address = InetAddress.getByName("255.255.255.255");
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, this.port);
+        super.getPool().execute(() -> {
+            try {
+                this.listening();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
 
-            socket.send(packet);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+        super.getPool().execute(() -> {
+            try {
+                while (true) {
+                    this.broadcast();
+                    Thread.sleep(3000);
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+    }
+
+    public void stop(){
+        super.setRunning(false);
+        if (super.getDatagramSocket() != null && !super.getDatagramSocket().isClosed()) {
+            super.getDatagramSocket().close();
         }
     }
 
-    public void listening() {
-        try (DatagramSocket socket = new DatagramSocket(this.port)) {
-            System.out.println(this.username + " is listening on port: " + this.port);
-            byte[] buffer = new byte[1024];
-            while (true){
-                DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+    private void broadcast() throws IOException {
+        super.getDatagramSocket().setBroadcast(true);
+        String msg = "DISCOVER:" + super.getUsername() + ":" + super.getPort();
+        byte[] buffer = msg.getBytes();
+        InetAddress address = InetAddress.getByName("255.255.255.255");
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, address, super.getPort());
 
-                socket.receive(packet);
+        getDatagramSocket().send(packet);
+    }
 
-                String received = new String(packet.getData(), 0, packet.getLength());
+    private void listening() throws IOException {
+        System.out.println(super.getUsername() + " is listening on port: " + super.getPort());
+        byte[] buffer = new byte[1024];
+        while (true) {
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
 
-                System.out.println("Received: " + received +
-                        " from " + packet.getAddress().getHostAddress());
+            super.getDatagramSocket().receive(packet);
+
+            String received = new String(packet.getData(), 0, packet.getLength());
+
+            if (received.startsWith("DISCOVER:")) {
+                String[] parts = received.split(":");
+                // parts[0] = DISCOVER
+                // parts[1] = username
+                // parts[2] = port
+
+                String senderName = parts[1];
+
+                // Nếu tên người gửi trùng với tên mình -> Bỏ qua
+                if (senderName.equals(super.getUsername())) {
+                    continue;
+                }
+
+                System.out.println(">> Found Peer: " + senderName + " at " + packet.getAddress().getHostAddress());
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+
+            System.out.println("Received: " + received +
+                    " from " + packet.getAddress().getHostAddress());
         }
     }
 }
