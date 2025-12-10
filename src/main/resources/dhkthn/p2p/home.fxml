@@ -1,27 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-
-<?import io.github.palexdev.materialfx.controls.MFXListView?>
 <?import javafx.scene.layout.*?>
-<!--suppress ALL -->
+
+<!--suppress JavaFxUnresolvedStyleClassReference -->
 <GridPane
-        hgap="10" xmlns="http://javafx.com/javafx"
+        xmlns="http://javafx.com/javafx"
         xmlns:fx="http://javafx.com/fxml"
         fx:controller="dhkthn.p2p.controller.HomeController"
         styleClass="bg-light"
-        stylesheets="@css/ListViews.css"
 >
     <columnConstraints>
         <ColumnConstraints percentWidth="30"/>
         <ColumnConstraints percentWidth="70"/>
     </columnConstraints>
 
-    <VBox GridPane.columnIndex="0" style="-fx-background-color: lightblue;">
-        <MFXListView id="custList" fx:id="userList"/>
-    </VBox>
-
-    <VBox GridPane.columnIndex="1" style="-fx-background-color: lightgreen;">
+    <VBox>
 
     </VBox>
 </GridPane>
-

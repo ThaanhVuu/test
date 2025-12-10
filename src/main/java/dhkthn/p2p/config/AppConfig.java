@@ -1,61 +1,8 @@
 package dhkthn.p2p.config;
 
 import dhkthn.p2p.model.User;
-import lombok.Getter;
-import lombok.Setter;
-
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.InterfaceAddress;
-import java.net.NetworkInterface;
-import java.security.MessageDigest;
-import java.util.Base64;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class AppConfig {
-    @Getter
-    private static final String PATH_SAVE_USER = "users.dat";
-
-    @Getter
-    private static final String PATH_SAVE_FILE = "received";
-
-    @Getter @Setter
-    private static User user;
-
-    @Getter
-    private static final int DISCOVERY_PORT = 8888;
-
-    @Getter
-    private static final int TIME_OUT = 2000;
-
-    public static InetAddress getBroadcastAddress() throws IOException {
-        InetAddress local = InetAddress.getLocalHost();
-        NetworkInterface ni = NetworkInterface.getByInetAddress(local);
-        if (ni != null) {
-            for (InterfaceAddress ia : ni.getInterfaceAddresses()) {
-                InetAddress broadcast = ia.getBroadcast();
-                if (broadcast != null) {
-                    // debug cho chắc
-                    System.out.println("[DISCOVERY] Using broadcast: " + broadcast.getHostAddress());
-                    return broadcast;
-                }
-            }
-        }
-        // fallback nếu không tìm được
-        return InetAddress.getByName("255.255.255.255");
-    }
-
-    @Getter
-    private static final ExecutorService executor = Executors.newFixedThreadPool(10);
-
-    public static String hashPassword(String password) {
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-256");
-            byte[] hashBytes = md.digest(password.getBytes());
-            return Base64.getEncoder().encodeToString(hashBytes);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+    private User user;
 }

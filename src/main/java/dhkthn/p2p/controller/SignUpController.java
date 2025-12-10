@@ -1,22 +1,29 @@
 package dhkthn.p2p.controller;
 
-import dhkthn.p2p.Main;
-import dhkthn.p2p.config.AppConfig;
+import dhkthn.p2p.App;
+import dhkthn.p2p.config.SecurityConfig;
 import dhkthn.p2p.model.User;
+import dhkthn.p2p.repository.UserRepo;
+import dhkthn.p2p.util.Toast;
 import io.github.palexdev.materialfx.controls.MFXPasswordField;
 import io.github.palexdev.materialfx.controls.MFXTextField;
-import javafx.css.PseudoClass;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.input.InputEvent;
-import lombok.NoArgsConstructor;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+
 import java.io.IOException;
+import java.sql.SQLException;
 
 @SuppressWarnings("ALL")
-@NoArgsConstructor
 public class SignUpController {
-    private final Helper helper = new Helper();
-    private static final PseudoClass INVALID = PseudoClass.getPseudoClass("invalid");
+    private final UserRepo userRepo;
+
+    public SignUpController() throws SQLException {
+        this.userRepo = new UserRepo();
+    }
 
     @FXML
     private MFXTextField usernameField;
@@ -26,54 +33,40 @@ public class SignUpController {
     private MFXPasswordField passwordField2;
 
     @FXML
-    private void handleSignUpBtn(ActionEvent e) {
+    private void handleSignUpBtn(ActionEvent event) throws IOException {
         String username = usernameField.getText();
         String password = passwordField.getText();
+        String password2 = passwordField2.getText();
 
-        if (username.isBlank() || username.length() < 6) {
-            usernameField.pseudoClassStateChanged(INVALID, true);
-            usernameField.setFloatingText("Username must be at least 6 character");
+        Stage currentStage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+
+        if (username.trim().isEmpty() || password.isEmpty() || password2.isEmpty()) {
+            Toast.show(currentStage, "Vui lòng điền đầy đủ thông tin.", Duration.seconds(3));
             return;
-        } else {
-            usernameField.pseudoClassStateChanged(INVALID, false);
-            usernameField.setFloatingText("Username");
         }
 
-        if (password.isBlank() || password.length() < 6) {
-            passwordField.pseudoClassStateChanged(INVALID, true);
-            passwordField.setFloatingText("Password must be at least 6 character");
+        if(!password2.equals(password)){
+            Toast.show(currentStage, "Mật khẩu không khớp", Duration.seconds(3));
             return;
-        } else {
-            passwordField.pseudoClassStateChanged(INVALID, false);
-            passwordField.setFloatingText("Password");
         }
 
-        if(!password.equals(passwordField2.getText())){
-            passwordField2.pseudoClassStateChanged(INVALID, true);
-            passwordField2.setFloatingText("Password not matched");
+        if(userRepo.checkUserExist(username)){
+            Toast.show(currentStage, "Tài khoản đã tồn tại", Duration.seconds(3));
             return;
-        } else {
-            passwordField2.pseudoClassStateChanged(INVALID, false);
-            passwordField2.setFloatingText("Password");
         }
 
-        User user = User.builder()
-                .password(AppConfig.hashPassword(password))
-                .username(username)
-                .build();
+        userRepo.save(User.builder()
+                        .username(username)
+                        .password(SecurityConfig.encode(password))
+                .build());
 
-        try {
-            user.saveUser();
-            helper.showAlert("Sign up successful!");
-            Main.setRoot("sign-in.fxml");
-        } catch (Exception ex) {
-            helper.showAlert(ex.getMessage());
-            ex.printStackTrace();
-        }
+        Toast.show(currentStage, "Đăng kí thành công", Duration.seconds(3));
+
+        App.setRoot("sign-in.fxml");
     }
 
     @FXML
     private void handleSignInClicked(InputEvent e) throws IOException {
-        Main.setRoot("sign-in.fxml");
+        App.setRoot("sign-in.fxml");
     }
 }
