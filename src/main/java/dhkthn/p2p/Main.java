@@ -1,26 +1,50 @@
 package dhkthn.p2p;
 
-import dhkthn.p2p.config.AppConfig;
-import dhkthn.p2p.model.Peer;
-import dhkthn.p2p.model.PeerDiscover;
+import dhkthn.p2p.model.PeerInfo;
+import dhkthn.p2p.model.PeerListener;
+import dhkthn.p2p.model.TcpFileTransferService;
+import dhkthn.p2p.model.UdpDiscoveryService;
 
-import java.net.DatagramSocket;
-import java.net.SocketException;
+import java.io.File;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class Main {
-    public static void main(String[] args) throws SocketException {
-//        Application.launch(App.class, args);
-        Peer peer =Peer.builder()
-                .username("vu")
-                .datagramSocket(new DatagramSocket(AppConfig.getPort()))
-                .pool(AppConfig.getPool())
-                .port(AppConfig.getPort())
-                .build();
+    public static void main(String[] args) {
+        // 1. Setup Dependency
+        ExecutorService pool = Executors.newCachedThreadPool();
+        PeerInfo myInfo = new PeerInfo("DevHelperUser", "localhost", 8888);
 
-        PeerDiscover peerDiscover = new PeerDiscover(peer);
+        // 2. Implement Listener (Xử lý Output tại đây)
+        PeerListener listener = new PeerListener() {
+            @Override
+            public void onPeerFound(PeerInfo peer) {
+                System.out.println(">> [UI] Tìm thấy bạn mới: " + peer.getUsername() + " tại " + peer.getHost());
+                // Logic thêm vào JList/Table...
+            }
 
-        peer.setPeerDiscover(peerDiscover);
+            @Override
+            public void onFileReceived(File file, PeerInfo sender) {
+                System.out.println(">> [UI] Đã nhận file: " + file.getAbsolutePath());
+            }
 
+            @Override
+            public void onError(String message) {
+                System.err.println("!! [ERROR] " + message);
+            }
+
+            @Override
+            public void onInfo(String message) {
+                System.out.println(">> [INFO] " + message);
+            }
+        };
+
+        // 3. Khởi tạo Services
+        UdpDiscoveryService discovery = new UdpDiscoveryService(myInfo, pool, listener);
+        TcpFileTransferService transfer = new TcpFileTransferService(myInfo, pool, listener);
+
+        // 4. Chạy
+        discovery.start();
+        transfer.startServer();
     }
-
 }
