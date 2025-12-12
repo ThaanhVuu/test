@@ -9,14 +9,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @RequiredArgsConstructor
-public class TcpFileTransferService {
+public class PeerFileTransfer {
     private final PeerInfo myInfo;
     private final ExecutorService threadPool;
     private final PeerListener listener;
 
     private ServerSocket serverSocket;
     private final AtomicBoolean isRunning = new AtomicBoolean(false);
-
     // --- SERVER SIDE (Nhận File) ---
     public void startServer() {
         if (isRunning.get()) return;
